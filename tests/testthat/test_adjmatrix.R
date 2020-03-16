@@ -1,0 +1,16 @@
+library("graphsim")
+library("igraph")
+context("Make Adjancency Matrix")
+
+test_that("Generate adjacency matrix from graph structure", {
+  graph_test1_edges <- rbind(c("A", "B"), c("B", "C"), c("B", "D"))
+  graph_test1 <- graph.edgelist(graph_test1_edges, directed = TRUE)
+  adjacency_matrix1 <- make_adjmatrix_graph(graph_test1)
+  expect_equal(isSymmetric(adjacency_matrix1), TRUE)
+  expect_equal(sum(diag(adjacency_matrix1)), 0)
+  expect_equal(nrow(adjacency_matrix1), length(V(graph_test1)))
+  expect_equal(ncol(adjacency_matrix1), length(V(graph_test1)))
+  expect_equal(sum(adjacency_matrix1), length(E(graph_test1))*2)
+  expect_equal(all(is.matrix(adjacency_matrix1)), TRUE)
+  expect_true(all(adjacency_matrix1 == cbind(c(0, 1, 0, 0), c(1, 0, 1, 1), c(0, 1, 0, 0), c(0, 1, 0, 0))))
+})

@@ -1,0 +1,58 @@
+## ---- message=F, warning=F----------------------------------------------------
+library('mvtnorm')
+library("igraph")
+library("gplots")
+library("graphsim")
+
+## ---- out.width = '50%', out.height  = '50%', fig.align='center', dpi=36------
+graph_test2_edges <- rbind(c("C", "E"), c("D", "E"), c("E", "F"))
+graph_test2 <- graph.edgelist(graph_test2_edges, directed = T)
+plot_directed(graph_test2, layout = layout.kamada.kawai)
+
+## ---- out.width = '50%', out.height  = '50%', fig.align='center', dpi=36------
+adj_mat <- make_adjmatrix_graph(graph_test2)
+heatmap.2(make_adjmatrix_graph(graph_test2), scale = "none", trace = "none", col = colorpanel(3, "grey75", "white", "blue"), colsep = 1:4, rowsep = 1:4)
+heatmap.2(make_adjmatrix_graph(graph_test2, directed = T), scale = "none", trace = "none", col = colorpanel(3, "grey75", "white", "blue"), colsep = 1:4, rowsep = 1:4)
+comm_mat <- make_commonlink_graph(graph_test2)
+heatmap.2(make_commonlink_graph(graph_test2), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+
+## ---- out.width = '50%', out.height  = '50%', fig.align='center', dpi=36------
+shortest.paths(graph_test2)
+heatmap.2(shortest.paths(graph_test2), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+(diameter(graph_test2)-shortest.paths(graph_test2))/diameter(graph_test2)
+heatmap.2((diameter(graph_test2)-shortest.paths(graph_test2))/diameter(graph_test2), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+make_distance_graph(graph_test2, absolute = F)
+make_distance_graph(graph_test2, absolute = T)
+
+## ---- out.width = '50%', out.height  = '50%', fig.align='center', dpi=36------
+#sigma from adj mat
+make_sigma_mat_graph(graph_test2, 0.8)
+heatmap.2(make_sigma_mat_graph(graph_test2, 0.8), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+#sigma from comm mat
+make_sigma_mat_graph(graph_test2, 0.8, comm = T)
+heatmap.2(make_sigma_mat_graph(graph_test2, 0.8, comm = T), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+# sigma from distance matrix
+make_sigma_mat_dist_graph(graph_test2, 0.8, absolute = T)
+make_sigma_mat_dist_graph(graph_test2, 0.8, absolute = F)
+heatmap.2(make_sigma_mat_dist_graph(graph_test2, 0.8, absolute = T), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+heatmap.2(make_sigma_mat_dist_graph(graph_test2, 0.8, absolute = F), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+
+## ---- out.width = '50%', out.height  = '50%', fig.align='center', dpi=36------
+#simulate expression data
+#adj mat
+expr <- generate_expression(100, graph_test2, cor = 0.8, mean = 0, comm =F) # unable to generate from adj mat ## fixed with positive definite correction
+heatmap.2(expr, scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+heatmap.2(cor(t(expr)), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+#comm mat
+expr <- generate_expression(100, graph_test2, cor = 0.8, mean = 0, comm =T) #expression from comm mat
+heatmap.2(expr, scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+heatmap.2(cor(t(expr)), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+#absolute dist
+expr<- generate_expression(100, graph_test2, cor = 0.8, mean = 0, comm = F, dist = T, absolute = T) # unable to generate from adj mat ## fixed PD
+heatmap.2(expr, scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+heatmap.2(cor(t(expr)), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+# relative dist
+expr<- generate_expression(100, graph_test2, cor = 0.8, mean = 0, comm = F, dist = T, absolute = F)
+heatmap.2(expr, scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+heatmap.2(cor(t(expr)), scale = "none", trace = "none", col = bluered(50), colsep = 1:4, rowsep = 1:4)
+
