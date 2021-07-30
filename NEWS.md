@@ -1,3 +1,11 @@
+# graphsim 1.0.2
+
+Updates maintainer contact details.
+
+- resolves vignette formatting #11 
+
+- passes updated CRAN checks (links updated)
+
 # graphsim 1.0.1
 
 * Update citation to reflect acceptance at JOSS
